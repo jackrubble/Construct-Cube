@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/jackrubble/Construct-Cube/issues"
   },
-  "homepage": "https://github.com/jackrubble/Construct-Cube#readme"
+  "homepage": "https://github.com/jackrubble/Construct-Cube#readme",
+  "dependencies": {
+    "express": "^4.18.1"
+  }
 }
