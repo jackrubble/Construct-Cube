@@ -1,0 +1,90 @@
+[1mdiff --git a/index.js b/index.js[m
+[1mindex 6890d12..854c8b1 100644[m
+[1m--- a/index.js[m
+[1m+++ b/index.js[m
+[36m@@ -2,10 +2,82 @@[m [mconst express = require('express')[m
+ const app = express()[m
+ const port = 3000[m
+ [m
+[31m-let database = [];[m
+[32m+[m[32mlet elevatorRaw = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];[m
+ [m
+[31m-app.get('/', (req, res) => {[m
+[31m-  res.send('Hello World!')[m
+[32m+[m[32mlet elevatorProcessed  = {floors: elevatorRaw.length, current_Floor: 3};[m
+[32m+[m
+[32m+[m[32mfunction display(height, location, width = 1, depth = 1){[m
+[32m+[m[32m    let asciiDisplay = "";[m
+[32m+[m[32m    for(let i = height; i > 0; i--){[m
+[32m+[m[32m        if(i == location){[m
+[32m+[m[32m            asciiDisplay = asciiDisplay + "<br> |&nbsp X &nbsp | ";[m
+[32m+[m[32m        }[m
+[32m+[m[32m        else{[m
+[32m+[m[32m            asciiDisplay = asciiDisplay + "<br> | &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp | ";[m
+[32m+[m[32m        }[m
+[32m+[m[32m    }[m
+[32m+[m[32m    return asciiDisplay[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mfunction elevatorButton(floor){[m
+[32m+[m[32m    elevatorProcessed.current_Floor = floor;[m
+[32m+[m[32m    let html = defineHTML();[m
+[32m+[m[32m    res.send(html);[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mfunction buttonGen(elevatorFloors){[m
+[32m+[m[32m    let buttonHTML = "";[m
+[32m+[m[32m    let counter = 0;[m
+[32m+[m[32m        for(let i of elevatorFloors){[m
+[32m+[m[32m            if(counter%3 == 0){[m
+[32m+[m[32m                buttonHTML = buttonHTML + "<br> <button onclick = elevatorButton(i)>" + i + "</button>";[m
+[32m+[m[32m            }[m
+[32m+[m[32m            else if(counter%3 == 1){[m
+[32m+[m[32m                buttonHTML = buttonHTML + "&nbsp&nbsp <button onclick = elevatorButton(i)>" + i + "</button>";[m
+[32m+[m[32m            }[m
+[32m+[m[32m            else{[m
+[32m+[m[32m                buttonHTML = buttonHTML + "&nbsp&nbsp <button onclick = elevatorButton(i)>" + i + "</button>";[m
+[32m+[m[32m            }[m
+[32m+[m[32m        counter++;[m
+[32m+[m[32m        }[m
+[32m+[m[32m    return buttonHTML[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32mfunction defineHTML(){[m
+[32m+[m[32m    myHTML = `[m
+[32m+[m[32m    <html>[m
+[32m+[m[32m    <head>[m
+[32m+[m[32m        <title>Elevator</title>[m
+[32m+[m[32m        <style>[m
+[32m+[m[41m    [m
+[32m+[m[32m        h1{[m
+[32m+[m[32m            font-size: 150px;[m
+[32m+[m[32m            font-family: "Helvetica", "Arial", sans;[m
+[32m+[m[32m        }[m
+[32m+[m[41m    [m
+[32m+[m[32m        </style>[m
+[32m+[m[32m    </head>[m
+[32m+[m[32m    <body>[m
+[32m+[m[32m        <div>[m
+[32m+[m[32m            <h1>Elevator Floor ${elevatorProcessed.current_Floor}</h1>[m
+[32m+[m[32m            <p>[m
+[32m+[m[32m            ${display(elevatorProcessed.floors, elevatorProcessed.current_Floor)}[m
+[32m+[m[32m            </p>[m
+[32m+[m[32m        </div>[m
+[32m+[m[32m        ${buttonGen(elevatorRaw)}[m
+[32m+[m[32m    </body>[m
+[32m+[m[32m    </html>[m
+[32m+[m[32m    `[m
+[32m+[m[32m    return myHTML;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m
+[32m+[m[32mapp.get('/', (req,res) => {[m
+[32m+[m[41m        [m
+[32m+[m[32m    let html = defineHTML();[m[41m    [m
+[32m+[m[41m    [m
+[32m+[m[32m    res.send(html);[m
+[32m+[m[41m    [m
+ })[m
+ [m
+ app.get('/borp', (req, res) => {[m
