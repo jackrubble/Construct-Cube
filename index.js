@@ -1,46 +1,43 @@
-const express = require('express')
+const express = require('express');
+const res = require('express/lib/response');
 const app = express()
 const port = 3000
 
-let elevatorRaw = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
-let elevatorProcessed  = {floors: elevatorRaw.length, current_Floor: 3};
+let elevator = {
+    floors: ["P3", "P2", "P1", "G", "1", "2", "SPH", "PH"],
+    currentLocationIndex: 3
+}
 
-function display(height, location, width = 1, depth = 1){
+function display({height, location, floors}){
     let asciiDisplay = "";
-    for(let i = height; i > 0; i--){
+    for(let i = height-1; i >= 0; i--){
         if(i == location){
-            asciiDisplay = asciiDisplay + "<br> |&nbsp X &nbsp | ";
+            asciiDisplay = asciiDisplay + "<br> |&nbsp X &nbsp | " + floors[i];
         }
         else{
-            asciiDisplay = asciiDisplay + "<br> | &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp | ";
+            asciiDisplay = asciiDisplay + "<br> | &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp | " + floors[i];
         }
     }
     return asciiDisplay
 }
 
-function elevatorButton(floor){
-    elevatorProcessed.current_Floor = floor;
+function elevatorButton({floor}){
+    elevator.currentLocationIndex = floor;
     let html = defineHTML();
     res.send(html);
 }
 
-function buttonGen(elevatorFloors){
-    let buttonHTML = "";
-    let counter = 0;
-        for(let i of elevatorFloors){
-            if(counter%3 == 0){
-                buttonHTML = buttonHTML + "<br> <button onclick = elevatorButton(i)>" + i + "</button>";
+function buttonGen({floors}){
+    let buttonHTML = [];
+        for(let i = 0; i < floors.length; i++){
+            let floor = floors[i];
+            buttonHTML.push(`<button><a href="/floor/${i}">${floor}</a></button> `);
+            if(i%3 == 2){
+                buttonHTML.push('<br/>')
             }
-            else if(counter%3 == 1){
-                buttonHTML = buttonHTML + "&nbsp&nbsp <button onclick = elevatorButton(i)>" + i + "</button>";
-            }
-            else{
-                buttonHTML = buttonHTML + "&nbsp&nbsp <button onclick = elevatorButton(i)>" + i + "</button>";
-            }
-        counter++;
         }
-    return buttonHTML
+    return buttonHTML.join("\n");
     }
 
 function defineHTML(){
@@ -51,7 +48,7 @@ function defineHTML(){
         <style>
     
         h1{
-            font-size: 150px;
+            font-size: 75px;
             font-family: "Helvetica", "Arial", sans;
         }
     
@@ -59,12 +56,12 @@ function defineHTML(){
     </head>
     <body>
         <div>
-            <h1>Elevator Floor ${elevatorProcessed.current_Floor}</h1>
+            <h1>Elevator Floor ${elevator.floors[elevator.currentLocationIndex]}</h1>
             <p>
-            ${display(elevatorProcessed.floors, elevatorProcessed.current_Floor)}
+            ${display({height:elevator.floors.length, location:elevator.currentLocationIndex, floors:elevator.floors})}
             </p>
         </div>
-        ${buttonGen(elevatorRaw)}
+        ${buttonGen({floors:elevator.floors})}
     </body>
     </html>
     `
@@ -78,6 +75,13 @@ app.get('/', (req,res) => {
     
     res.send(html);
     
+})
+
+app.get('/floor/:floor', (req, res) => {
+
+    elevator.currentLocationIndex = req.params.floor;
+
+    res.redirect('/');
 })
 
 app.get('/borp', (req, res) => {
