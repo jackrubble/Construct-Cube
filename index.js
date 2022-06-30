@@ -3,7 +3,6 @@ const res = require('express/lib/response');
 const app = express()
 const port = 3000
 
-
 let elevator = {
     floors: ["P3", "P2", "P1", "G", "1", "2", "SPH", "PH"],
     currentLocationIndex: 3
@@ -32,7 +31,7 @@ function buttonGen({floors}){
     let buttonHTML = [];
         for(let i = 0; i < floors.length; i++){
             let floor = floors[i];
-            buttonHTML.push(`<button><a href="/floor/${i}">${floor}</a></button> `);
+            buttonHTML.push(`<button><a href="/floor/${i}">${floor}</a></button>`);
             if(i%3 == 2){
                 buttonHTML.push('<br/>')
             }
@@ -58,7 +57,7 @@ function defineHTML(){
         <div>
             <h1>Elevator Floor ${elevator.floors[elevator.currentLocationIndex]}</h1>
             <p>
-            ${display({height:elevator.floors.length, location:elevator.currentLocationIndex, floors:elevator.floors})}
+            ${display({height:elevator.floors.length, location:elevator.currentLocationIndex, floors:elevator.floors})} 
             </p>
         </div>
         ${buttonGen({floors:elevator.floors})}
@@ -78,8 +77,16 @@ app.get('/', (req,res) => {
 })
 
 app.get('/floor/:floor', (req, res) => {
-
-    elevator.currentLocationIndex = req.params.floor;
+    let floor = parseInt(req.params.floor);
+    if(isNaN(floor) || floor < 0 || floor > elevator.floors.length){
+        console.error(`${req.params.floor} is not a valid floor`)
+        return res.redirect('/');
+    }
+    
+    if(floor < 0 || floor > elevator.floors.length){
+        return res.redirect('/');
+    }
+    elevator.currentLocationIndex = floor;
 
     res.redirect('/');
 })
